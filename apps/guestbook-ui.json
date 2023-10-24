@@ -1,0 +1,51 @@
+{
+   "apiVersion": "argoproj.io/v1alpha1",
+   "kind": "ApplicationSet",
+   "metadata": {
+      "name": "guestbook-ui",
+      "namespace": "argocd"
+   },
+   "spec": {
+      "generators": [
+         {
+            "clusters": {
+               "selector": {
+                  "matchLabels": {
+                     "env": "test"
+                  }
+               }
+            }
+         }
+      ],
+      "goTemplate": true,
+      "goTemplateOptions": [
+         "missingkey=error"
+      ],
+      "template": {
+         "metadata": {
+            "name": "{{.name}}-guestbook-ui"
+         },
+         "spec": {
+            "destination": {
+               "namespace": "apps",
+               "server": "{{.server}}"
+            },
+            "project": "default",
+            "source": {
+               "path": "app-resources/guestbook-ui",
+               "repoURL": "https://github.com/avinashkris9/argocd-playground.git",
+               "targetRevision": "HEAD"
+            },
+            "syncPolicy": {
+               "automated": {
+                  "prune": true,
+                  "selfHeal": true
+               },
+               "syncOptions": [
+                  "CreateNamespace=true"
+               ]
+            }
+         }
+      }
+   }
+}

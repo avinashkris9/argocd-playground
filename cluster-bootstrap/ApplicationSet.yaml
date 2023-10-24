@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-bootstrap
+
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/avinashkris9/argocd-playground.git
+      revision: HEAD
+      directories:
+      - path: cluster-bootstrap/templates/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          
+      source:
+        repoURL: https://github.com/avinashkris9/argocd-playground.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.docker.internal:6443
